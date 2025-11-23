@@ -10,6 +10,8 @@ tamagotchi/
 │   ├── display.hpp       # Cabecera del módulo de pantalla
 │   ├── tamagotchi.cpp    # Lógica principal del Tamagotchi
 │   ├── tamagotchi.hpp    # Cabecera del Tamagotchi
+|   ├── tienda.cpp        # Lógica principal de la tienda
+│   ├── tienda.hpp        # Cabecera de la tienda
 |   |── utils.cpp         # Funciones utilitarias
 |   |── utils.hpp         # Cabecera de funciones utilitarias
 ├── experiments/
