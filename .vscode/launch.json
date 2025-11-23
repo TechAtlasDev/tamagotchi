@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch en Consola Externa",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/${fileBasenameNoExtension}.o", // Ruta del ejecutable creado en tasks.json
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            // *** ESTO ES CLAVE PARA LA VENTANA EMERGENTE ***
+            "externalConsole": false, 
+            
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb", // **AJUSTA ESTA RUTA** (e.g., "C:\\MinGW\\bin\\gdb.exe" en Windows)
+            "setupCommands": [
+                {
+                    "description": "Enable pretty printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Compilar C++ Activo" // Asegura que la tarea de compilación se ejecute antes de iniciar
+        }
+    ]
+}
