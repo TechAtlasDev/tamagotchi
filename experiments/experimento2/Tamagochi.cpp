@@ -213,7 +213,7 @@ void Tamagotchi::aplicarModAndTik()
 Inventario* Tamagotchi::getInventario() { 
     return &inventario; 
 }
-bool Tamagotchi::estaVivo() { 
+bool Tamagotchi::estaVivo() const { 
     return Salud > 0; 
 }
 void Tamagotchi::EstadoAnimacion() {
