@@ -2,7 +2,6 @@
 #include <cstdlib>
 #include <ctime>
 #include <cstdio>
-#include <cstring>
 #include "Display.hpp"
 #include "Tamagotchi.hpp"
 #include "Inventario.hpp"

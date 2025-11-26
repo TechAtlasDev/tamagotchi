@@ -1,9 +1,27 @@
 #include "Tamagotchi.hpp"
-#include <cstring>
+
+// Función helper para obtener longitud de string
+int get_strlen(const char* s) {
+    int len = 0;
+    while (s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+// Función helper para copiar string
+void copy_string(char* dest, const char* src) {
+    int i = 0;
+    while (src[i] != '\0') {
+        dest[i] = src[i];
+        i++;
+    }
+    dest[i] = '\0';
+}
 
 Tamagotchi::Tamagotchi(const char* n) {
-    nombre = new char[strlen(n) + 1];
-    strcpy(nombre, n);
+    nombre = new char[get_strlen(n) + 1];
+    copy_string(nombre, n);
     
     calcular_seed();
     ultima_recuperacion = time(nullptr);
