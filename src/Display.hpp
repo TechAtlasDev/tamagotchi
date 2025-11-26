@@ -6,7 +6,6 @@
 
 using namespace std;
 
-// Constantes para AnimacionDisplay
 const int MAX_FRAMES = 10;
 const int MAX_FRAME_SIZE = 5000;
 

@@ -86,7 +86,6 @@ int main() {
                 cout << "\nOpcion invalida. Intenta de nuevo." << endl;
             }
         } else {
-            // Mostrar animación arriba y menú abajo
             char menu_str[1024];
             char estado_str[1024];
             char contenido_completo[2048];
@@ -133,8 +132,6 @@ int main() {
             } else {
                 cout << "\nOpcion invalida. Intenta de nuevo." << endl;
             }
-
-            // Actualizar estado cada acción
             if (mascota != nullptr) {
                 mascota->actualizar();
             }

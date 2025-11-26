@@ -15,5 +15,4 @@ Gato::~Gato() {
 }
 
 void Gato::aplicar_adicional_TK() {
-    // Método adicional específico del Gato si es necesario
 }

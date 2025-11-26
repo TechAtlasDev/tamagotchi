@@ -95,8 +95,6 @@ void Display::render() {
     }
 }
 
-// ============ AnimacionDisplay ============
-
 AnimacionDisplay::AnimacionDisplay() {
     frames_cargados = 0;
     frame_actual = 0;
@@ -187,8 +185,6 @@ const char* AnimacionDisplay::obtener_frame_str(int numero_frame) const {
     return frames[numero_frame];
 }
 
-// ============ DisplayLayout ============
-
 DisplayLayout::DisplayLayout(int ancho, int alto_total, int porcentaje_superior) {
     this->ancho = ancho;
     this->alto_total = alto_total;
@@ -217,7 +213,6 @@ void DisplayLayout::mostrar_linea_divisoria() {
 void DisplayLayout::mostrar_animacion_y_menu(const char* animacion, const char* menu) {
     system("clear");
     
-    // Mostrar animación en la parte superior
     int lineas_animacion = 0;
     const char* ptr = animacion;
     int col_actual = 0;
@@ -233,16 +228,13 @@ void DisplayLayout::mostrar_animacion_y_menu(const char* animacion, const char* 
         ptr++;
     }
     
-    // Rellenar con espacios si la animación tiene menos líneas
     while (lineas_animacion < alto_superior) {
         cout << endl;
         lineas_animacion++;
     }
     
-    // Línea divisoria
     mostrar_linea_divisoria();
     
-    // Mostrar menú en la parte inferior
     int lineas_menu = 0;
     ptr = menu;
     col_actual = 0;

@@ -25,20 +25,17 @@ class Tamagotchi {
         Tamagotchi(const char* n);
         virtual ~Tamagotchi();
 
-        // Getters
         const char* getNombre() const;
         int getFelicidad() const;
         int getEnergia() const;
         int getSalud() const;
         int getDinero() const;
 
-        // Acciones
         virtual void comer();
         virtual void jugar();
         virtual void dormir();
         virtual void trabajar();
         
-        // Actualización
         void actualizar();
         bool estaVivo() const;
         void mostrar_estado() const;

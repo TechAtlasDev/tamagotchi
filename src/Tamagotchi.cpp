@@ -1,6 +1,5 @@
 #include "Tamagotchi.hpp"
 
-// Función helper para obtener longitud de string
 int get_strlen(const char* s) {
     int len = 0;
     while (s[len] != '\0') {
@@ -9,7 +8,6 @@ int get_strlen(const char* s) {
     return len;
 }
 
-// Función helper para copiar string
 void copy_string(char* dest, const char* src) {
     int i = 0;
     while (src[i] != '\0') {
@@ -126,7 +124,6 @@ void Tamagotchi::trabajar() {
 void Tamagotchi::actualizar() {
     time_t ahora = time(nullptr);
     
-    // Recuperación pasiva cada 60 segundos
     if (difftime(ahora, ultima_recuperacion) >= 60) {
         if (energia < 100) {
             energia += 5;
@@ -137,26 +134,21 @@ void Tamagotchi::actualizar() {
         ultima_recuperacion = ahora;
     }
     
-    // Eventos aleatorios cada 1-5 minutos (simular rápido: cada 5-10 segundos)
     if (difftime(ahora, ultimo_evento) >= (5 + rand() % 5)) {
         int evento = rand() % 3;
         
         if (evento == 0) {
-            // Evento hambre
             energia -= 10;
             felicidad -= 5;
         } else if (evento == 1) {
-            // Evento aburrimiento
             felicidad -= 15;
         } else {
-            // Evento enfermedad
             salud -= 10;
         }
         
         ultimo_evento = ahora;
     }
     
-    // Cálculo de daño por hambre/felicidad
     int daño_total = 0;
     
     if (energia == 0) {
