@@ -3,10 +3,13 @@
 
 #include <iostream>
 #include <fstream>
-#include <string>
-#include <vector>
+#include <cstring>
 
 using namespace std;
+
+// Constantes para AnimacionDisplay
+const int MAX_FRAMES = 10;
+const int MAX_FRAME_SIZE = 5000;
 
 class Display {
     private:
@@ -33,9 +36,10 @@ class Display {
 
 class AnimacionDisplay {
     private:
-        vector<string> frames;
+        char frames[MAX_FRAMES][MAX_FRAME_SIZE];
+        int frames_cargados = 0;
         int frame_actual = 0;
-        bool cargar_frame(const char* ruta);
+        bool cargar_frame(const char* ruta, int indice);
 
     public:
         AnimacionDisplay();
@@ -45,7 +49,7 @@ class AnimacionDisplay {
         void mostrar_frame(int numero_frame);
         void mostrar_animacion();
         int obtener_cantidad_frames() const;
-        string obtener_frame_str(int numero_frame) const;
+        const char* obtener_frame_str(int numero_frame) const;
 };
 
 class DisplayLayout {
@@ -59,7 +63,7 @@ class DisplayLayout {
         DisplayLayout(int ancho, int alto_total, int porcentaje_superior = 60);
         ~DisplayLayout();
 
-        void mostrar_animacion_y_menu(const string& animacion, const string& menu);
+        void mostrar_animacion_y_menu(const char* animacion, const char* menu);
         void mostrar_linea_divisoria();
         int obtener_alto_superior() const;
         int obtener_alto_inferior() const;

@@ -98,13 +98,22 @@ void Display::render() {
 // ============ AnimacionDisplay ============
 
 AnimacionDisplay::AnimacionDisplay() {
+    frames_cargados = 0;
+    frame_actual = 0;
+    for (int i = 0; i < MAX_FRAMES; i++) {
+        frames[i][0] = '\0';
+    }
 }
 
 AnimacionDisplay::~AnimacionDisplay() {
-    frames.clear();
 }
 
-bool AnimacionDisplay::cargar_frame(const char* ruta) {
+bool AnimacionDisplay::cargar_frame(const char* ruta, int indice) {
+    if (indice < 0 || indice >= MAX_FRAMES) {
+        cerr << "Indice de frame fuera de rango: " << indice << endl;
+        return false;
+    }
+    
     ifstream archivo(ruta);
     
     if (!archivo.is_open()) {
@@ -112,36 +121,42 @@ bool AnimacionDisplay::cargar_frame(const char* ruta) {
         return false;
     }
     
-    string contenido = "";
-    string linea;
+    int pos = 0;
+    char caracter;
     
-    while (getline(archivo, linea)) {
-        contenido += linea + "\n";
+    while (archivo.get(caracter) && pos < MAX_FRAME_SIZE - 1) {
+        frames[indice][pos++] = caracter;
     }
+    frames[indice][pos] = '\0';
     
     archivo.close();
-    frames.push_back(contenido);
     return true;
 }
 
 bool AnimacionDisplay::cargar_animacion(const char* carpeta, int cantidad_frames) {
-    frames.clear();
+    if (cantidad_frames > MAX_FRAMES) {
+        cerr << "Cantidad de frames excede el máximo permitido: " << MAX_FRAMES << endl;
+        return false;
+    }
+    
+    frames_cargados = 0;
     
     for (int i = 1; i <= cantidad_frames; i++) {
         char ruta[256];
         snprintf(ruta, sizeof(ruta), "%s/Frame%d.txt", carpeta, i);
         
-        if (!cargar_frame(ruta)) {
+        if (!cargar_frame(ruta, i - 1)) {
             cerr << "Error al cargar Frame " << i << endl;
             return false;
         }
+        frames_cargados++;
     }
     
     return true;
 }
 
 void AnimacionDisplay::mostrar_frame(int numero_frame) {
-    if (numero_frame < 0 || numero_frame >= (int)frames.size()) {
+    if (numero_frame < 0 || numero_frame >= frames_cargados) {
         cerr << "Frame no valido: " << numero_frame << endl;
         return;
     }
@@ -151,22 +166,22 @@ void AnimacionDisplay::mostrar_frame(int numero_frame) {
 }
 
 void AnimacionDisplay::mostrar_animacion() {
-    if (frames.empty()) {
+    if (frames_cargados == 0) {
         cerr << "No hay frames cargados" << endl;
         return;
     }
     
     system("clear");
     cout << frames[frame_actual];
-    frame_actual = (frame_actual + 1) % frames.size();
+    frame_actual = (frame_actual + 1) % frames_cargados;
 }
 
 int AnimacionDisplay::obtener_cantidad_frames() const {
-    return frames.size();
+    return frames_cargados;
 }
 
-string AnimacionDisplay::obtener_frame_str(int numero_frame) const {
-    if (numero_frame < 0 || numero_frame >= (int)frames.size()) {
+const char* AnimacionDisplay::obtener_frame_str(int numero_frame) const {
+    if (numero_frame < 0 || numero_frame >= frames_cargados) {
         return "";
     }
     return frames[numero_frame];
@@ -178,7 +193,7 @@ DisplayLayout::DisplayLayout(int ancho, int alto_total, int porcentaje_superior)
     this->ancho = ancho;
     this->alto_total = alto_total;
     this->alto_superior = (alto_total * porcentaje_superior) / 100;
-    this->alto_inferior = alto_total - alto_superior - 1; // -1 para la línea divisoria
+    this->alto_inferior = alto_total - alto_superior - 1;
 }
 
 DisplayLayout::~DisplayLayout() {
@@ -199,73 +214,47 @@ void DisplayLayout::mostrar_linea_divisoria() {
     cout << endl;
 }
 
-void DisplayLayout::mostrar_animacion_y_menu(const string& animacion, const string& menu) {
+void DisplayLayout::mostrar_animacion_y_menu(const char* animacion, const char* menu) {
     system("clear");
     
-    // Dividir animación en líneas
-    vector<string> lineas_animacion;
-    string linea_actual = "";
-    for (size_t i = 0; i < animacion.length(); i++) {
-        if (animacion[i] == '\n') {
-            // Limitar líneas al ancho máximo
-            if (linea_actual.length() > (size_t)ancho) {
-                linea_actual = linea_actual.substr(0, ancho);
-            }
-            lineas_animacion.push_back(linea_actual);
-            linea_actual = "";
-        } else {
-            linea_actual += animacion[i];
-        }
-    }
-    if (!linea_actual.empty()) {
-        if (linea_actual.length() > (size_t)ancho) {
-            linea_actual = linea_actual.substr(0, ancho);
-        }
-        lineas_animacion.push_back(linea_actual);
-    }
+    // Mostrar animación en la parte superior
+    int lineas_animacion = 0;
+    const char* ptr = animacion;
+    int col_actual = 0;
     
-    // Mostrar sección superior (animación)
-    int lineas_mostradas = 0;
-    for (const string& l : lineas_animacion) {
-        if (lineas_mostradas >= alto_superior) break;
-        cout << l << endl;
-        lineas_mostradas++;
+    while (*ptr != '\0' && lineas_animacion < alto_superior) {
+        cout << *ptr;
+        if (*ptr == '\n') {
+            lineas_animacion++;
+            col_actual = 0;
+        } else {
+            col_actual++;
+        }
+        ptr++;
     }
     
     // Rellenar con espacios si la animación tiene menos líneas
-    while (lineas_mostradas < alto_superior) {
+    while (lineas_animacion < alto_superior) {
         cout << endl;
-        lineas_mostradas++;
+        lineas_animacion++;
     }
     
     // Línea divisoria
     mostrar_linea_divisoria();
     
-    // Mostrar sección inferior (menú)
-    vector<string> lineas_menu;
-    linea_actual = "";
-    for (size_t i = 0; i < menu.length(); i++) {
-        if (menu[i] == '\n') {
-            if (linea_actual.length() > (size_t)ancho) {
-                linea_actual = linea_actual.substr(0, ancho);
-            }
-            lineas_menu.push_back(linea_actual);
-            linea_actual = "";
-        } else {
-            linea_actual += menu[i];
-        }
-    }
-    if (!linea_actual.empty()) {
-        if (linea_actual.length() > (size_t)ancho) {
-            linea_actual = linea_actual.substr(0, ancho);
-        }
-        lineas_menu.push_back(linea_actual);
-    }
+    // Mostrar menú en la parte inferior
+    int lineas_menu = 0;
+    ptr = menu;
+    col_actual = 0;
     
-    lineas_mostradas = 0;
-    for (const string& l : lineas_menu) {
-        if (lineas_mostradas >= alto_inferior) break;
-        cout << l << endl;
-        lineas_mostradas++;
+    while (*ptr != '\0' && lineas_menu < alto_inferior) {
+        cout << *ptr;
+        if (*ptr == '\n') {
+            lineas_menu++;
+            col_actual = 0;
+        } else {
+            col_actual++;
+        }
+        ptr++;
     }
 }

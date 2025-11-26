@@ -1,7 +1,8 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
-#include <sstream>
+#include <cstdio>
+#include <cstring>
 #include "Display.hpp"
 #include "Tamagotchi.hpp"
 #include "Inventario.hpp"
@@ -19,43 +20,42 @@ void mostrar_menu_principal() {
     cout << "\nElige una opcion (1-3): ";
 }
 
-string generar_menu_acciones() {
-    stringstream ss;
-    ss << "\n";
-    ss << "╔════════════════════════════════════════╗" << endl;
-    ss << "║         MENU DE ACCIONES               ║" << endl;
-    ss << "╚════════════════════════════════════════╝" << endl;
-    ss << "\n1. Comer" << endl;
-    ss << "2. Jugar" << endl;
-    ss << "3. Dormir" << endl;
-    ss << "4. Trabajar" << endl;
-    ss << "5. Ver estado" << endl;
-    ss << "6. Volver al menu principal" << endl;
-    ss << "\nElige una accion (1-6): ";
-    return ss.str();
+void generar_menu_acciones(char* buffer, int max_size) {
+    snprintf(buffer, max_size,
+        "\n╔════════════════════════════════════════╗\n"
+        "║         MENU DE ACCIONES               ║\n"
+        "╚════════════════════════════════════════╝\n"
+        "\n1. Comer\n"
+        "2. Jugar\n"
+        "3. Dormir\n"
+        "4. Trabajar\n"
+        "5. Ver estado\n"
+        "6. Volver al menu principal\n"
+        "\nElige una accion (1-6): "
+    );
 }
 
-string generar_pantalla_juego(Tamagotchi* mascota) {
-    stringstream ss;
-    ss << "\n Nombre: " << mascota->getNombre() << endl;
-    ss << " Felicidad: " << mascota->getFelicidad() << "/100";
-    for (int i = 0; i < mascota->getFelicidad() / 10; i++) ss << "█";
-    ss << endl;
-    ss << " Energia:   " << mascota->getEnergia() << "/100";
-    for (int i = 0; i < mascota->getEnergia() / 10; i++) ss << "█";
-    ss << endl;
-    ss << " Salud:     " << mascota->getSalud() << "/100";
-    for (int i = 0; i < mascota->getSalud() / 10; i++) ss << "█";
-    ss << endl;
-    ss << " Dinero:    $" << mascota->getDinero() << endl;
-    return ss.str();
+void generar_pantalla_juego(Tamagotchi* mascota, char* buffer, int max_size) {
+    int felicidad = mascota->getFelicidad();
+    int energia = mascota->getEnergia();
+    int salud = mascota->getSalud();
+    int dinero = mascota->getDinero();
+    
+    snprintf(buffer, max_size,
+        "\n Nombre: %s\n"
+        " Felicidad: %d/100\n"
+        " Energia:   %d/100\n"
+        " Salud:     %d/100\n"
+        " Dinero:    $%d\n",
+        mascota->getNombre(), felicidad, energia, salud, dinero
+    );
 }
 
 int main() {
     srand(time(nullptr));
     Tamagotchi* mascota = nullptr;
     AnimacionDisplay* animacion = nullptr;
-    DisplayLayout* layout = new DisplayLayout(80, 30, 60); // 80 de ancho, 30 de alto, 60% superior
+    DisplayLayout* layout = new DisplayLayout(120, 70, 60);
     int opcion = 0;
 
     while (true) {
@@ -88,9 +88,14 @@ int main() {
             }
         } else {
             // Mostrar animación arriba y menú abajo
-            string menu_str = generar_menu_acciones();
-            string estado_str = generar_pantalla_juego(mascota);
-            string contenido_completo = estado_str + "\n" + menu_str;
+            char menu_str[1024];
+            char estado_str[1024];
+            char contenido_completo[2048];
+            
+            generar_menu_acciones(menu_str, sizeof(menu_str));
+            generar_pantalla_juego(mascota, estado_str, sizeof(estado_str));
+            
+            snprintf(contenido_completo, sizeof(contenido_completo), "%s\n%s", estado_str, menu_str);
             
             if (animacion != nullptr && animacion->obtener_cantidad_frames() > 0) {
                 layout->mostrar_animacion_y_menu(animacion->obtener_frame_str(0), contenido_completo);
