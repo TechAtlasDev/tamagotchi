@@ -28,6 +28,46 @@ Antes de implementar una version definitiva de ciertas funcionalidades, tienes q
     ```
 3. Compila el código fuente:
     ```
+    g++ -std=c++11 -o tamagotchi src/main.cpp src/Display.cpp src/Tamagotchi.cpp src/Inventario.cpp
+    ```
+4. Ejecuta el programa:
+    ```
+    ./tamagotchi
+    ```
+
+## Estructura del Proyecto
+
+```
+src/
+├── main.cpp              # Programa principal con menú interactivo
+├── Display.hpp/.cpp      # Clase para renderizar en pantalla ASCII
+├── Tamagotchi.hpp/.cpp   # Clase base de la mascota virtual
+└── Inventario.hpp/.cpp   # Subclases Pou y Gato
+
+assets/
+└── Gato/
+    └── Frame1-6.txt      # Animaciones ASCII del gato
+```
+
+## Clases Principales
+
+### Display
+- Matriz bidimensional de enteros para renderizado ASCII
+- Métodos para dibujar, limpiar y renderizar en consola
+
+### AnimacionDisplay
+- Carga frames ASCII desde archivos
+- Permite mostrar animaciones de la mascota
+
+### Tamagotchi
+- Clase base con atributos: Felicidad, Energía, Salud, Dinero
+- Sistema de timers usando `ctime`
+- Acciones: comer(), jugar(), dormir(), trabajar()
+- Actualización de estado y cálculo de daño
+
+### Pou y Gato
+- Subclases de Tamagotchi con características específicas
+- Herencia de toda la lógica base
     g++ -o tamagotchi main.cpp
     ```
 4. Ejecuta el programa:
