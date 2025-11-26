@@ -49,28 +49,6 @@ assets/
     └── Frame1-6.txt      # Animaciones ASCII del gato
 ```
 
-## Clases Principales
+## Excalidraw
 
-### Display
-- Matriz bidimensional de enteros para renderizado ASCII
-- Métodos para dibujar, limpiar y renderizar en consola
-
-### AnimacionDisplay
-- Carga frames ASCII desde archivos
-- Permite mostrar animaciones de la mascota
-
-### Tamagotchi
-- Clase base con atributos: Felicidad, Energía, Salud, Dinero
-- Sistema de timers usando `ctime`
-- Acciones: comer(), jugar(), dormir(), trabajar()
-- Actualización de estado y cálculo de daño
-
-### Pou y Gato
-- Subclases de Tamagotchi con características específicas
-- Herencia de toda la lógica base
-    g++ -o tamagotchi main.cpp
-    ```
-4. Ejecuta el programa:
-    ```
-    ./tamagotchi
-    ```
+https://excalidraw.com/#room=45361e09e609fb7e2ea0,aS6-pik6p9JBNu-CQvpeVA
