@@ -10,9 +10,9 @@ using namespace std;
 
 void mostrar_menu_principal() {
     cout << "\n";
-    cout << "╔════════════════════════════════════════╗" << endl;
-    cout << "║       TAMAGOTCHI - MENU PRINCIPAL      ║" << endl;
-    cout << "╚════════════════════════════════════════╝" << endl;
+    cout << "" << endl;
+    cout << "║       TAMAGOTCHI - MENU PRINCIPAL  " << endl;
+    cout << "" << endl;
     cout << "\n1. Crear nuevo Tamagotchi (Gato)" << endl;
     cout << "2. Crear nuevo Tamagotchi (Pou)" << endl;
     cout << "3. Salir" << endl;
@@ -21,9 +21,9 @@ void mostrar_menu_principal() {
 
 void generar_menu_acciones(char* buffer, int max_size) {
     snprintf(buffer, max_size,
-        "\n╔════════════════════════════════════════╗\n"
-        "║         MENU DE ACCIONES               ║\n"
-        "╚════════════════════════════════════════╝\n"
+        "\\n"
+        "║         MENU DE ACCIONES           \n"
+        "\n"
         "\n1. Comer\n"
         "2. Jugar\n"
         "3. Dormir\n"
@@ -141,10 +141,10 @@ int main() {
 
             if (mascota != nullptr && !mascota->estaVivo()) {
                 system("clear");
-                cout << "\n╔════════════════════════════════════════╗" << endl;
-                cout << "║  ¡Tu Tamagotchi ha muerto!            ║" << endl;
-                cout << "║  No cuidaste bien a tu mascota :(      ║" << endl;
-                cout << "╚════════════════════════════════════════╝" << endl;
+                cout << "\n" << endl;
+                cout << "Tu Tamagotchi ha muerto!        " << endl;
+                cout << "No cuidaste bien a tu mascota :(" << endl;
+                cout << "" << endl;
                 delete mascota;
                 mascota = nullptr;
                 if (animacion != nullptr) {
