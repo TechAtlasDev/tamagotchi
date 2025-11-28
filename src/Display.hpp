@@ -42,7 +42,7 @@ class AnimacionDisplay {
     public:
         AnimacionDisplay();
         ~AnimacionDisplay();
-        
+
         bool cargar_animacion(const char* carpeta, int cantidad_frames);
         void mostrar_frame(int numero_frame);
         void mostrar_animacion();

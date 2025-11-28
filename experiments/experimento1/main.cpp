@@ -69,7 +69,11 @@ int Matriz::getValor(int columna, int fila) {
 }
 
 void Matriz::clear_terminal() {
-    system("clear");
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
 }
 
 class Display {

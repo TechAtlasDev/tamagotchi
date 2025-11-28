@@ -20,10 +20,38 @@ void copy_string(char* dest, const char* src) {
 Tamagotchi::Tamagotchi(const char* n) {
     nombre = new char[get_strlen(n) + 1];
     copy_string(nombre, n);
-    
+
     calcular_seed();
-    ultima_recuperacion = time(nullptr);
-    ultimo_evento = time(nullptr);
+
+    hambre = 100;
+    felicidad = 100;
+    energia = 100;
+    salud = 100;
+    dinero = 0;
+    estado = 0;
+
+    time_t ahora = time(nullptr);
+    ultimo_hambre = ahora;
+    ultima_felicidad = ahora;
+    ultima_energia = ahora;
+    ultima_recuperacion_energia = ahora;
+    ultimo_evento = ahora;
+
+    int base = calcular_base_nombre(nombre);
+    mod_hambre = 1 + (base % 3);
+    mod_energia = 1 + (base % 2);
+    mod_felicidad = 1 + (base % 4);
+    dano_critico = 10 + (base % 5);
+
+    tiempo_base_hambre = 40;
+    tiempo_base_felicidad = 45;
+    tiempo_base_energia = 50;
+
+    tiempo_hambre = generar_tiempo_aleatorio(tiempo_base_hambre, 20);
+    tiempo_felicidad = generar_tiempo_aleatorio(tiempo_base_felicidad, 10);
+    tiempo_energia = generar_tiempo_aleatorio(tiempo_base_energia, 15);
+    tiempo_proximo_evento = generar_tiempo_aleatorio(60, 240);
+    evento_activo = true;
 }
 
 Tamagotchi::~Tamagotchi() {
@@ -37,6 +65,80 @@ void Tamagotchi::calcular_seed() {
     }
     seed_aleatorio = suma;
     srand(seed_aleatorio);
+}
+
+int Tamagotchi::calcular_base_nombre(const char* nombre_base) {
+    int base = 0;
+    for (int i = 0; nombre_base[i] != '\0'; i++) {
+        base += (int)nombre_base[i];
+    }
+    return base;
+}
+
+int Tamagotchi::generar_tiempo_aleatorio(int base, int max_extra) {
+    if (max_extra <= 0) {
+        return base;
+    }
+    return base + (rand() % max_extra);
+}
+
+int Tamagotchi::calcular_dano_proporcional(int valor) {
+    if (valor == 0) {
+        return dano_critico;
+    }
+    if (valor <= 20) {
+        return 20;
+    }
+    if (valor <= 50) {
+        return 15;
+    }
+    if (valor <= 80) {
+        return 10;
+    }
+    return 5;
+}
+
+void Tamagotchi::recuperar_energia() {
+    time_t ahora = time(nullptr);
+    if (difftime(ahora, ultima_recuperacion_energia) >= 60) {
+        energia += 5;
+        if (energia > 100) {
+            energia = 100;
+        }
+        ultima_recuperacion_energia = ahora;
+    }
+}
+
+void Tamagotchi::evento_aleatorio() {
+    if (!evento_activo) {
+        return;
+    }
+
+    int tipo = rand() % 4;
+    if (tipo == 0) {
+        felicidad += 10;
+        if (felicidad > 100) {
+            felicidad = 100;
+        }
+    } else if (tipo == 1) {
+        energia -= 5;
+        if (energia < 0) {
+            energia = 0;
+        }
+    } else if (tipo == 2) {
+        salud -= 5;
+        if (salud < 0) {
+            salud = 0;
+        }
+    } else {
+        hambre -= 5;
+        if (hambre < 0) {
+            hambre = 0;
+        }
+    }
+
+    tiempo_proximo_evento = generar_tiempo_aleatorio(60, 240);
+    evento_activo = false;
 }
 
 const char* Tamagotchi::getNombre() const {
@@ -59,114 +161,140 @@ int Tamagotchi::getDinero() const {
     return dinero;
 }
 
+int Tamagotchi::getHambre() const {
+    return hambre;
+}
+
 void Tamagotchi::comer() {
-    if (energia < 10) {
-        energia += 5;
-    } else {
-        energia += 10;
+    if (hambre >= 100) {
+        return;
     }
-    
-    if (energia > 100) {
-        energia = 100;
+
+    hambre += 20;
+    if (hambre > 100) {
+        hambre = 100;
     }
-    
+
     if (salud < 100) {
-        salud += 5;
+        salud += 10;
+        if (salud > 100) {
+            salud = 100;
+        }
     }
-    if (salud > 100) {
-        salud = 100;
+
+    if (dinero >= 5) {
+        dinero -= 5;
     }
-    
-    dinero -= 5;
+
+    tiempo_hambre = generar_tiempo_aleatorio(tiempo_base_hambre, 20);
+    ultimo_hambre = time(nullptr);
 }
 
 void Tamagotchi::jugar() {
-    if (energia < 20) {
-        energia -= 5;
-        felicidad += 5;
-    } else {
-        energia -= 15;
-        felicidad += 20;
+    if (felicidad >= 100) {
+        return;
     }
-    
+
+    felicidad += 20;
     if (felicidad > 100) {
         felicidad = 100;
     }
+
+    energia -= 10;
     if (energia < 0) {
         energia = 0;
     }
+
+    tiempo_felicidad = generar_tiempo_aleatorio(tiempo_base_felicidad, 10);
+    ultima_felicidad = time(nullptr);
+    tiempo_energia = generar_tiempo_aleatorio(tiempo_base_energia, 15);
+    ultima_energia = time(nullptr);
 }
 
 void Tamagotchi::dormir() {
     energia = 100;
-    salud += 10;
-    if (salud > 100) {
-        salud = 100;
-    }
+    ultima_energia = time(nullptr);
+    tiempo_energia = generar_tiempo_aleatorio(tiempo_base_energia, 15);
+
     felicidad -= 5;
     if (felicidad < 0) {
         felicidad = 0;
     }
+
+    hambre -= 10;
+    if (hambre < 0) {
+        hambre = 0;
+    }
 }
 
 void Tamagotchi::trabajar() {
-    energia -= 20;
+    dinero += 25;
+    energia -= 15;
+    felicidad -= 10;
+    hambre -= 5;
+
     if (energia < 0) {
         energia = 0;
     }
-    dinero += 25;
-    felicidad -= 10;
     if (felicidad < 0) {
         felicidad = 0;
+    }
+    if (hambre < 0) {
+        hambre = 0;
+    }
+}
+
+void Tamagotchi::aplicarModAndTik() {
+    time_t ahora = time(nullptr);
+
+    if (difftime(ahora, ultimo_hambre) >= tiempo_hambre) {
+        hambre -= mod_hambre;
+        if (hambre < 0) {
+            hambre = 0;
+        }
+        ultimo_hambre = ahora;
+    }
+
+    if (difftime(ahora, ultima_felicidad) >= tiempo_felicidad) {
+        felicidad -= mod_felicidad;
+        if (felicidad < 0) {
+            felicidad = 0;
+        }
+        ultima_felicidad = ahora;
+    }
+
+    if (difftime(ahora, ultima_energia) >= tiempo_energia) {
+        energia -= mod_energia;
+        if (energia < 0) {
+            energia = 0;
+        }
+        ultima_energia = ahora;
+    }
+
+    recuperar_energia();
+
+    if (hambre == 0 || felicidad == 0) {
+        salud = 0;
+    } else {
+        int dano = 0;
+        dano += calcular_dano_proporcional(hambre);
+        dano += calcular_dano_proporcional(felicidad);
+        dano += calcular_dano_proporcional(energia);
+        salud -= dano;
+        if (salud < 0) {
+            salud = 0;
+        }
+    }
+
+    if (difftime(ahora, ultimo_evento) >= tiempo_proximo_evento) {
+        evento_activo = true;
+        ultimo_evento = ahora;
+        evento_aleatorio();
     }
 }
 
 void Tamagotchi::actualizar() {
-    time_t ahora = time(nullptr);
-    
-    if (difftime(ahora, ultima_recuperacion) >= 60) {
-        if (energia < 100) {
-            energia += 5;
-        }
-        if (salud < 100) {
-            salud += 2;
-        }
-        ultima_recuperacion = ahora;
-    }
-    
-    if (difftime(ahora, ultimo_evento) >= (5 + rand() % 5)) {
-        int evento = rand() % 3;
-        
-        if (evento == 0) {
-            energia -= 10;
-            felicidad -= 5;
-        } else if (evento == 1) {
-            felicidad -= 15;
-        } else {
-            salud -= 10;
-        }
-        
-        ultimo_evento = ahora;
-    }
-    
-    int daño_total = 0;
-    
-    if (energia == 0) {
-        daño_total += 10;
-    } else if (energia >= 1 && energia <= 20) {
-        daño_total += 20;
-    }
-    
-    if (felicidad == 0) {
-        daño_total += 10;
-    } else if (felicidad >= 1 && felicidad <= 20) {
-        daño_total += 20;
-    }
-    
-    salud -= daño_total;
-    if (salud < 0) {
-        salud = 0;
-    }
+    aplicarModAndTik();
 }
 
 bool Tamagotchi::estaVivo() const {
@@ -175,6 +303,7 @@ bool Tamagotchi::estaVivo() const {
 
 void Tamagotchi::mostrar_estado() const {
     cout << "\n=== Estado de " << nombre << " ===" << endl;
+    cout << "Hambre:    " << hambre << "/100" << endl;
     cout << "Felicidad: " << felicidad << "/100" << endl;
     cout << "Energia:   " << energia << "/100" << endl;
     cout << "Salud:     " << salud << "/100" << endl;

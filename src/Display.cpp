@@ -81,7 +81,11 @@ char Display::replace_ascii(int valor) {
 }
 
 void Display::clear_terminal() {
-    system("clear");
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
 }
 
 void Display::render() {

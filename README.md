@@ -28,7 +28,7 @@ Antes de implementar una version definitiva de ciertas funcionalidades, tienes q
     ```
 3. Compila el código fuente:
     ```
-    g++ -std=c++11 -o tamagotchi src/main.cpp src/Display.cpp src/Tamagotchi.cpp src/Inventario.cpp
+    g++ -std=c++11 -o tamagotchi src/main.cpp src/Display.cpp src/Tamagotchi.cpp src/Inventario.cpp src/GameDisplay.cpp
     ```
 4. Ejecuta el programa:
     ```
@@ -40,15 +40,50 @@ Antes de implementar una version definitiva de ciertas funcionalidades, tienes q
 ```
 src/
 ├── main.cpp              # Programa principal con menú interactivo
-├── Display.hpp/.cpp      # Clase para renderizar en pantalla ASCII
+├── Display.hpp/.cpp      # Clase para renderizar matriz ASCII en terminal
+├── GameDisplay.hpp/.cpp  # Abstracción de Display - maneja UI del juego
 ├── Tamagotchi.hpp/.cpp   # Clase base de la mascota virtual
-└── Inventario.hpp/.cpp   # Subclases Pou y Gato
+├── Inventario.hpp/.cpp   # Subclases Pou y Gato
+├── DisplayLayout.hpp/.cpp # Layout dividido (animación arriba, menú abajo)
+└── AnimacionDisplay.hpp/.cpp # Carga y muestra frames ASCII
 
 assets/
 └── Gato/
     └── Frame1-6.txt      # Animaciones ASCII del gato
+
+docs/
+├── Display.md            # Documentación de la clase Display
+├── DisplayLayout.md      # Documentación de DisplayLayout
+└── GameDisplay.md        # Documentación de GameDisplay
 ```
 
-## Excalidraw
+## Clases principales
 
-https://excalidraw.com/#room=45361e09e609fb7e2ea0,aS6-pik6p9JBNu-CQvpeVA
+### Display
+- Matriz bidimensional de píxeles ASCII
+- Métodos: draw, render, setValor, getValor, limpiar
+- Base para todo el renderizado visual
+
+### GameDisplay
+- **Nueva clase abstracta** que encapsula la lógica de UI
+- Actualiza estadísticas cada 5 segundos automáticamente
+- Dibuja estado y menú en Display
+- Simplifica main.cpp considerablemente
+
+### Tamagotchi
+- Clase base con atributos: Felicidad, Energía, Salud, Dinero
+- Sistema de timers usando ctime
+- Acciones: comer(), jugar(), dormir(), trabajar()
+- Actualización de estado y cálculo de daño
+
+### Pou y Gato
+- Subclases de Tamagotchi con características específicas
+- Herencia de toda la lógica base
+
+## Cambios recientes
+
+- ✅ Creada clase `GameDisplay` para abstraer lógica visual
+- ✅ Implementada actualización automática cada 5 segundos
+- ✅ Simplificado `main.cpp` (sin threads, código más limpio)
+- ✅ Añadida documentación completa en `/docs`
+- ✅ Se mantiene compatibilidad con Windows y Linux
