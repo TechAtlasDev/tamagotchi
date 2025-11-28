@@ -4,7 +4,7 @@
 
 int main() {
     srand(time(nullptr));
-    Game juego(80, 30);
+    Game juego(100, 100);
     juego.play();
     return 0;
 }

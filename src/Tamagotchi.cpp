@@ -271,8 +271,13 @@ void Tamagotchi::aplicarModAndTik() {
         ultima_energia = ahora;
     }
 
-    recuperar_energia();
+    // Muerte inmediata si energía es 0
+    if (energia == 0) {
+        salud = 0;
+        return;
+    }
 
+    // Muerte inmediata si hambre o felicidad son 0
     if (hambre == 0 || felicidad == 0) {
         salud = 0;
     } else {
@@ -298,7 +303,8 @@ void Tamagotchi::actualizar() {
 }
 
 bool Tamagotchi::estaVivo() const {
-    return salud > 0;
+    // La mascota muere si salud es 0 O si energía es 0
+    return salud > 0 && energia > 0;
 }
 
 void Tamagotchi::mostrar_estado() const {

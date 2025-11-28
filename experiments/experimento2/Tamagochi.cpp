@@ -214,7 +214,10 @@ Inventario* Tamagotchi::getInventario() {
     return &inventario; 
 }
 bool Tamagotchi::estaVivo() const { 
-    return Salud > 0; 
+    if (Salud > 0 || Energia > 0 || Hambre > 0) 
+        return true; 
+    else 
+        return false;
 }
 void Tamagotchi::EstadoAnimacion() {
     // Encargate Giovany de esto XD
