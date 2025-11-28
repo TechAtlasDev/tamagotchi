@@ -11,7 +11,7 @@ Game::Game(int ancho_total, int alto_total) {
     mascota = nullptr;
     corriendo = true;
     frame_actual = 0;
-    seccion_animacion = alto - 15;
+    seccion_animacion = (alto * 3) / 5;
     if (seccion_animacion >= alto) {
         seccion_animacion = alto - 5;
     }
@@ -176,9 +176,10 @@ bool Game::seleccionarMascota() {
         cout << "╔════════════════════════════════════════╗" << endl;
         cout << "║       TAMAGOTCHI - MENU PRINCIPAL      ║" << endl;
         cout << "╚════════════════════════════════════════╝" << endl;
-        cout << "\n1. Crear nuevo Tamagotchi" << endl;
-        cout << "2. Salir" << endl;
-        cout << "\nElige una opcion (1-2): ";
+        cout << "\n1. Crear nuevo Tamagotchi (Gato)" << endl;
+        cout << "2. Crear nuevo Tamagotchi (Pou)" << endl;
+        cout << "3. Salir" << endl;
+        cout << "\nElige una opcion (1-3): ";
         int opcion = 0;
         cin >> opcion;
         
@@ -190,7 +191,7 @@ bool Game::seleccionarMascota() {
         }
         
         cin.ignore(10000, '\n');
-        if (opcion == 1) {
+        if (opcion == 1 || opcion == 2) {
             char nombre[100];
             cout << "Nombre de tu mascota: ";
             cin.getline(nombre, 100);
@@ -212,9 +213,13 @@ bool Game::seleccionarMascota() {
             if (mascota != nullptr) {
                 delete mascota;
             }
-            mascota = new Tamagotchi(nombre);
+            if (opcion == 1) {
+                mascota = new Gato(nombre);
+            } else {
+                mascota = new Pou(nombre);
+            }
             return true;
-        } else if (opcion == 2) {
+        } else if (opcion == 3) {
             return false;
         } else {
             cout << "\nOpcion invalida. Intenta de nuevo." << endl;

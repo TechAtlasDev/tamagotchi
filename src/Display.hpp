@@ -50,21 +50,4 @@ class AnimacionDisplay {
         const char* obtener_frame_str(int numero_frame) const;
 };
 
-class DisplayLayout {
-    private:
-        int ancho = 0;
-        int alto_total = 0;
-        int alto_superior = 0;
-        int alto_inferior = 0;
-
-    public:
-        DisplayLayout(int ancho, int alto_total, int porcentaje_superior = 60);
-        ~DisplayLayout();
-
-        void mostrar_animacion_y_menu(const char* animacion, const char* menu);
-        void mostrar_linea_divisoria();
-        int obtener_alto_superior() const;
-        int obtener_alto_inferior() const;
-};
-
 #endif

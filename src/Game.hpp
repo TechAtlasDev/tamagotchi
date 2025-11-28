@@ -3,6 +3,7 @@
 
 #include "Display.hpp"
 #include "Tamagotchi.hpp"
+#include "Inventario.hpp"
 
 class Game {
     private:
